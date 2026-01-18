@@ -1,0 +1,81 @@
+################################################################################
+# Flink 基础运行时配置 (生产环境模板)
+################################################################################
+
+#=============== Java 17+ 必要参数（使用 Java 8/11 时可删除） ===============
+env:
+  java:
+    opts:
+      all:
+        # 解决 Java 17 模块访问限制问题
+        --add-exports=java.base/sun.net.util=ALL-UNNAMED
+        --add-exports=java.rmi/sun.rmi.registry=ALL-UNNAMED
+        --add-opens=java.base/java.lang=ALL-UNNAMED
+        --add-opens=java.base/java.nio=ALL-UNNAMED
+      # 其他模块访问权限配置...
+
+#======================= 集群核心配置 =======================
+jobmanager:
+  bind-host: 0.0.0.0  # JM 绑定地址（容器化部署需设为 0.0.0.0）
+  rpc:
+    address: mj01      # JM 对外 RPC 地址（集群节点主机名）
+    port: 6123         # JM RPC 端口
+  memory:
+    process:
+      size: 1600m      # JM 进程总内存（含 JVM 开销）
+  execution:
+    failover-strategy: region  # 区域故障恢复策略（降低恢复范围）
+  archive:
+    fs:
+      dir: hdfs://mj01:8020/flink/completed-jobs/  # 作业存档目录
+
+taskmanager:
+  bind-host: 0.0.0.0   # TM 绑定地址（容器化部署需设为 0.0.0.0）
+  host: mj01           # TM 主机地址（通常与 bind-host 一致）
+  numberOfTaskSlots: 3 # 每个 TM 的 Task Slot 数量（建议等于 CPU 核心数）
+  memory:
+    process:
+      size: 1728m      # TM 进程总内存（含 JVM 开销）
+
+parallelism:
+  default: 1           # 默认并行度（作业未指定时生效）
+
+#==================== 检查点与状态后端配置 ====================
+state:
+  backend:
+    type: hashmap      # 状态后端类型（hashmap/rocksdb）
+  checkpoints:
+    dir: hdfs://mj01:8020/flink-checkpoints  # 检查点存储目录
+  savepoints:
+    dir: hdfs://mj01:8020/flink-savepoints   # 保存点存储目录
+
+#=================== REST API 与 Web 控制台 ===================
+rest:
+  address: mj01        # REST 服务对外地址
+  bind-address: 0.0.0.0 # REST 服务绑定地址
+  port: 8081           # REST 服务端口（生产建议开启）
+
+web:
+  submit.enable: false # 禁用 Web 提交作业（安全加固）
+  cancel.enable: false # 禁用 Web 取消作业（安全加固）
+
+#======================= 历史服务器配置 =======================
+historyserver:
+  web:
+    address: 0.0.0.0   # 历史服务器绑定地址
+    port: 8082         # 历史服务器端口
+  archive:
+    fs:
+      dir: hdfs://mj01:8020/flink/completed-jobs/  # 监控的作业存档目录
+      fs.refresh-interval: 10000  # 目录刷新间隔（毫秒）
+
+#=============== 高级配置（按需取消注释） ===============
+# execution:
+#   checkpointing:
+#     interval: 3min   # 检查点间隔（建议设为作业容忍延迟的 1-2 倍）
+#     timeout: 10min   # 检查点超时时间
+
+# high-availability:   # 高可用配置（需配合 ZooKeeper）
+#   type: zookeeper
+#   storageDir: hdfs:///flink/ha/
+#   zookeeper.quorum: zk1:2181,zk2:2181,zk3:2181

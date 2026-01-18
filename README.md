@@ -1,3 +1,10 @@
+<!-- TOC -->
+* [Docker](#docker)
+  * [docker常用命令](#docker常用命令)
+  * [DOCKERFILE 文件编译docker镜像](#dockerfile-文件编译docker镜像)
+* [FLink](#flink)
+  * [Flink2.2官方文档](#flink22官方文档)
+<!-- TOC -->
 # Docker
 ## docker常用命令
 <BR>https://www.bilibili.com/video/BV1MC4y1P7GE?spm_id_from=333.788.player.switch&vd_source=fa7bdbb85b3026e2a92e276472cd8bc7
@@ -22,6 +29,8 @@
 <BR><B>docker build \<path> -t \<imageName>:\<imageTag></B>
 
 <BR><-- 私仓 -->
+<BR>git clone git@github.com:Monster-Way/Hw-BigData.git
+<BR>docker build -t .\ hw-docker-images:1.0.0
 <BR>docker login
 <BR>docker push hwmonsterway/hw-docker-images:1.0.0
 <BR>docker pull hwmonsterway/hw-docker-images:1.0.0
@@ -33,16 +42,22 @@
 <BR>
 <BR><B>ENV</B>
 <BR>
+<BR><B>WORKDIR</B>
+<BR>
 <BR><B>COPY</B>
 <BR>
-<BR><B>CMD</B>
+<BR><B>CMD</B> :: 用于指定容器默认运行的程序(可替换)
 <BR> - CMD \<shell命令>
 <BR> - CMD ['要执行的命令', '参数1', '参数2']
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;1. 如果Dockerfile中存在多条CMD命令, 只有最后一条生效
 <BR>&nbsp;&nbsp;&nbsp;&nbsp;2. CMD 可以被容器启动时的命令行参数替换 "docker run -it \<image> <命令> <参数1> <参数2>"
 <BR>
-<BR><B>ENTRYPOINT</B>
-<BR>
+<BR><B>ENTRYPOINT</B> :: 用于指定容器默认运行的程序(不可替换)
+<BR> - ENTRYPOINT \<shell命令>
+<BR> - ENTRYPOINT ['要执行的命令', '参数1', '参数2', ...]
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;1. Dockerfile中只能定义一个ENTRYPOINT
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;2. ENTRYPOINT指定的命令不能被替换, 在容器启动时可以追加参数
+<BR>&nbsp;&nbsp;&nbsp;&nbsp;3. CMD 可以用于给ENTRYPOINT指定参数, ENTRYPOINT设置指定命令 CMD用作可选可替换参数
 <BR><B>
 <BR>
 <BR><B>
