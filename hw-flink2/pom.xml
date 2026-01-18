@@ -32,11 +32,11 @@
 
     <dependencies>
         <!-- Lombok 注解库，简化代码编写 -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.projectlombok</groupId>-->
+<!--            <artifactId>lombok</artifactId>-->
+<!--            <version>1.18.30</version>-->
+<!--        </dependency>-->
 
         <!-- MySQL 数据库驱动 -->
         <dependency>
