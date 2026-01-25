@@ -1,10 +1,79 @@
 <!-- TOC -->
+* [Linux](#linux)
+* [Hadoop集群](#hadoop集群)
+  * [Hadoop 2.2以上, 并由HDFS服务](#hadoop-22以上-并由hdfs服务)
+  * [1. 环境变量](#1-环境变量)
 * [Docker](#docker)
   * [docker常用命令](#docker常用命令)
   * [DOCKERFILE 文件编译docker镜像](#dockerfile-文件编译docker镜像)
 * [FLink](#flink)
   * [Flink2.2官方文档](#flink22官方文档)
 <!-- TOC -->
+# Linux
+```linux
+// 查看内存信息
+lscpu是Linux下最常用的CPU信息查询工具，能够显示详细的CPU架构、核心数、线程数等信息。
+
+// 更换yum镜像源
+1、备份原始的源文件
+cd /etc/yum.repos.d/
+mv CentOS-Base.repo CentOS-Base.repo.blk
+2、 下载阿里云的源文件
+wget -O /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
+curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
+3、清理缓存
+yum clean all
+4、加载新的源(阿里云)
+yum makecache
+
+// 批量下载常用软件
+yum -y vim dnf
+
+// 安装ing
+mkdir /pkgs
+mkdir -p /opt/huaiwei/
+touch /etc/profile.d/huaiwei_env.sh
+
+cd /opt/huaiwei/
+tar -zxf /pkgs/jdk-8u202-linux-x64.tar.gz -C ./
+tar -zxf /pkgs/hadoop-3.4.2.tar.gz -C ./
+tar -zxf /pkgs/apache-hive-4.2.0-bin.tar.gz -C ./
+tar -zxf /pkgs/kafka_2.13-4.1.1.tgz -C ./
+tar -zxf /pkgs/flink-1.17.0-bin-scala_2.12.gz -C ./
+
+mv /opt/huaiwei/jdk1.8.0_202 /opt/huaiwei/jdk180
+mv /opt/huaiwei/hadoop-3.4.2/ /opt/huaiwei/hadoop342
+mv /opt/huaiwei/apache-hive-4.2.0-bin/ /opt/huaiwei/hive420
+
+
+vim /etc/profile.d/huaiwei_env.sh
+# JAVA_HOME
+export JAVA_HOME=/opt/huaiwei/jdk180
+export PATH=$JAVA_HOME/bin:$PATH
+
+# HADOOP_HOME
+export HADOOP_HOME=/opt/huaiwei/hadoop342
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_HDFS_HOME=$HADOOP_HOME
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_YARN_HOME=$HADOOP_HOME
+export PATH=$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$PATH
+
+
+```
+
+# Hadoop集群
+
+![img.png](img.png)
+## Hadoop 2.2以上, 并由HDFS服务
+## 1. 环境变量
+sudo vim /etc/profile.d/my_env.sh
+
+HADOOP_HOME=/opt/huaiwei/hadoop-3.3.4
+export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+export HADOOP_CONF_DIR=${HADOOP_HOME}/etc/hadoop
+export HADOOP_CLASSPATH=`hadoop classpath`
+
 # Docker
 ## docker常用命令
 <BR>https://www.bilibili.com/video/BV1MC4y1P7GE?spm_id_from=333.788.player.switch&vd_source=fa7bdbb85b3026e2a92e276472cd8bc7
